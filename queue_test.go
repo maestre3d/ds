@@ -8,17 +8,17 @@ import (
 func TestNewSliceQueue(t *testing.T) {
 	q := ds.NewSliceQueue[int](10)
 
-	q.Push(1)
-	q.Push(2)
-	q.Push(3)
-	q.Push(4)
+	q.Enqueue(1)
+	q.Enqueue(2)
+	q.Enqueue(3)
+	q.Enqueue(4)
 
-	a, b := q.Pop(), q.Pop()
+	a, b := q.Dequeue(), q.Dequeue()
 	res := a * b
 	t.Logf("%d * %d = %d", a, b, res)
 
-	t.Log(q.Pop())
-	t.Log(q.Pop())
+	t.Log(q.Dequeue())
+	t.Log(q.Dequeue())
 
 	tests := []struct {
 		name string
