@@ -1,4 +1,4 @@
-package ds_test
+package slice_test
 
 import (
 	"testing"
@@ -6,18 +6,19 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/maestre3d/ds/v2"
+	"github.com/maestre3d/ds/v2/slice"
 )
 
-func TestSliceIterator(t *testing.T) {
+func TestIterator(t *testing.T) {
 	in := []int{0, 1, 2, 3, 4, 5, 6}
-	iter := ds.NewSliceIterator(in, ds.ForwardIteration)
+	iter := slice.NewIterator(in, ds.ForwardIteration)
 	i := 0
 	for iter.HasNext() {
 		assert.Equal(t, in[i], iter.Next())
 		i++
 	}
 
-	iter = ds.NewSliceIterator(in, ds.BackwardIteration)
+	iter = slice.NewIterator(in, ds.BackwardIteration)
 	i = len(in) - 1
 	for iter.HasNext() {
 		assert.Equal(t, in[i], iter.Next())

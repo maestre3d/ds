@@ -46,6 +46,10 @@ func (l *List[T]) GetTail() *Node[T] {
 
 // GetNodeAt retrieves a Node at a given position.
 func (l *List[T]) GetNodeAt(pos int) *Node[T] {
+	if l.length == 0 {
+		return nil
+	}
+
 	if pos == 0 {
 		return l.head
 	}
@@ -59,15 +63,12 @@ func (l *List[T]) GetNodeAt(pos int) *Node[T] {
 
 // GetAt retrieves the sentinel value from a Node at a given position.
 func (l *List[T]) GetAt(pos int) T {
-	if pos == 0 {
-		return l.head.Value
+	node := l.GetNodeAt(pos)
+	if node == nil {
+		var zeroVal T
+		return zeroVal
 	}
-
-	current := l.head
-	for i := 0; i < pos; i++ {
-		current = current.Next
-	}
-	return current.Value
+	return node.Value
 }
 
 // Append attaches a Node at the tail of the list (i.e. last element).
@@ -113,20 +114,38 @@ func (l *List[T]) InsertAt(pos int, item T) {
 			Value: item,
 			Next:  l.head,
 		}
-		l.head.Previous = node
+		if l.head != nil {
+			l.head.Previous = node
+		}
 		l.head = node
+
+		if l.length == 0 {
+			l.tail = l.head
+		}
 		return
 	}
 
 	parentNode := l.GetNodeAt(pos - 1)
 	currentNode := l.GetNodeAt(pos)
-	node := &Node[T]{
-		Value:    item,
-		Next:     currentNode,
-		Previous: currentNode.Previous,
+
+	if parentNode == nil && currentNode == nil {
+		l.length--
+		return
 	}
-	parentNode.Next = node
-	currentNode.Previous = node
+
+	node := &Node[T]{
+		Value: item,
+		Next:  currentNode,
+	}
+	if currentNode != nil {
+		node.Previous = currentNode.Previous
+		currentNode.Previous = node
+	}
+
+	if parentNode != nil {
+		parentNode.Next = node
+	}
+
 }
 
 // ReplaceAt inserts given value into the Node at the given position.
@@ -136,9 +155,46 @@ func (l *List[T]) ReplaceAt(pos int, val T) {
 }
 
 func (l *List[T]) Remove() {
-	//node := l.GetNodeAt(l.Len() - 1)
-	//node = nil
+	if l.tail == nil {
+		return
+	}
+	defer func() {
+		l.length--
+	}()
+	prevNode := l.tail.Previous
+	prevNode.Next = nil
+	l.tail = nil
+	l.tail = prevNode
 }
 
 func (l *List[T]) RemoveAt(pos int) {
+	prevNode := l.GetNodeAt(pos - 1)
+	nextNode := l.GetNodeAt(pos + 1)
+	wasShift := false
+	defer func() {
+		if wasShift {
+			l.length--
+		}
+	}()
+	if pos == 0 {
+		l.head = nextNode
+		nextNode.Previous = nil
+		wasShift = true
+		return
+	}
+	if prevNode != nil {
+		prevNode.Next = nextNode
+		wasShift = true
+	}
+	if nextNode != nil {
+		nextNode.Previous = prevNode
+		wasShift = true
+	}
+}
+
+// RemoveAll deletes every node from the List.
+func (l *List[T]) RemoveAll() {
+	l.head = nil
+	l.tail = nil
+	l.length = 0
 }

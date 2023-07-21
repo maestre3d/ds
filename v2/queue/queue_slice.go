@@ -2,17 +2,6 @@ package queue
 
 import "github.com/maestre3d/ds/v2"
 
-// Type kind of Queue (FIFO or LIFO).
-type Type uint8
-
-const (
-	_ Type = iota
-	// LIFO represents a Queue with Last-In First-Out (LIFO) item dequeue technique. Also known as Stack.
-	LIFO
-	// FIFO represents a Queue with First-In First-Out (FIFO) item dequeue technique.
-	FIFO
-)
-
 // A SliceQueue is a concrete implementation of a Queue using a Go slice as underlying data structure.
 //
 // Can be LIFO (stack) or FIFO.
