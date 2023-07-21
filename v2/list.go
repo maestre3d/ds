@@ -3,6 +3,7 @@ package ds
 // A List is a sequential set of items stored in a physical data structure (array or linked list).
 type List[T any] interface {
 	Iterable[T]
+	Slicer[T]
 	// Len retrieves total number of items a List holds.
 	Len() int
 	// GetAt retrieves an item at the given position.
@@ -21,6 +22,4 @@ type List[T any] interface {
 	RemoveAt(pos int)
 	// RemoveAll deletes every item from the List. Might reallocate.
 	RemoveAll()
-	// ToSlice retrieves List as a Go slice.
-	ToSlice() []T
 }

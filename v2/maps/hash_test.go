@@ -13,10 +13,16 @@ func TestHashMap(t *testing.T) {
 	s := maps.HashMap[int, string]{}
 	s.PutAll([]int{0, 1, 2, 3}, []string{"0", "1", "2", "3"})
 	assert.True(t, s.Contains(3))
+	assert.Len(t, s.ToSlice(), 4)
+	assert.Len(t, s.ToSliceKeys(), 4)
+	assert.Len(t, s.ToSliceValues(), 4)
 	s.Remove(3)
 	assert.False(t, s.Contains(3))
 	s.RemoveAll()
 	assert.Equal(t, 0, len(s))
+	assert.Len(t, s.ToSlice(), 0)
+	assert.Len(t, s.ToSliceKeys(), 0)
+	assert.Len(t, s.ToSliceValues(), 0)
 }
 
 func TestHashMap_NewIterator(t *testing.T) {

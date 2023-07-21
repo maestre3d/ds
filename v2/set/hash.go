@@ -40,3 +40,15 @@ func (h HashSet[K]) RemoveAll() {
 		delete(h, k)
 	}
 }
+
+func (h HashSet[K]) ToSlice() []K {
+	if len(h) == 0 {
+		return nil
+	}
+
+	buf := make([]K, 0, len(h))
+	for k := range h {
+		buf = append(buf, k)
+	}
+	return buf
+}

@@ -49,3 +49,42 @@ func (h HashMap[K, V]) RemoveAll() {
 		delete(h, k)
 	}
 }
+
+func (h HashMap[K, V]) ToSlice() []KeyValueItem[K, V] {
+	if len(h) == 0 {
+		return nil
+	}
+
+	buf := make([]KeyValueItem[K, V], 0, len(h))
+	for k, v := range h {
+		buf = append(buf, KeyValueItem[K, V]{
+			Key:   k,
+			Value: v,
+		})
+	}
+	return buf
+}
+
+func (h HashMap[K, V]) ToSliceKeys() []K {
+	if len(h) == 0 {
+		return nil
+	}
+
+	buf := make([]K, 0, len(h))
+	for k := range h {
+		buf = append(buf, k)
+	}
+	return buf
+}
+
+func (h HashMap[K, V]) ToSliceValues() []V {
+	if len(h) == 0 {
+		return nil
+	}
+
+	buf := make([]V, 0, len(h))
+	for _, v := range h {
+		buf = append(buf, v)
+	}
+	return buf
+}
