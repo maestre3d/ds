@@ -34,6 +34,8 @@ func TestNewList(t *testing.T) {
 
 			tt.list.Append(4)
 			assert.Equal(t, 4, tt.list.Len())
+			outSlc := tt.list.ToSlice()
+			assert.Len(t, outSlc, 4)
 
 			tt.list.Remove()
 			assert.Equal(t, 3, tt.list.Len())
@@ -61,6 +63,9 @@ func TestNewList(t *testing.T) {
 			assert.Equal(t, 0, tt.list.Len())
 			tt.list.InsertAt(0, 1) // first item always inserts
 			assert.Equal(t, 1, tt.list.Len())
+
+			tt.list.Remove()
+			assert.Len(t, tt.list.ToSlice(), 0)
 		})
 	}
 }

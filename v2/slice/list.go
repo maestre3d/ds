@@ -36,6 +36,17 @@ func (s *List[T]) Cap() int {
 	return cap(s.buf)
 }
 
+// ToSlice retrieves List as a Go slice.
+func (s *List[T]) ToSlice() []T {
+	if len(s.buf) == 0 {
+		return nil
+	}
+
+	dst := make([]T, len(s.buf), cap(s.buf))
+	copy(dst, s.buf)
+	return dst
+}
+
 // GetAt retrieves an item at the given position.
 func (s *List[T]) GetAt(pos int) T {
 	if pos >= len(s.buf) {

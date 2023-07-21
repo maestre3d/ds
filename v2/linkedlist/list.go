@@ -162,7 +162,9 @@ func (l *List[T]) Remove() {
 		l.length--
 	}()
 	prevNode := l.tail.Previous
-	prevNode.Next = nil
+	if prevNode != nil {
+		prevNode.Next = nil
+	}
 	l.tail = nil
 	l.tail = prevNode
 }
@@ -212,4 +214,19 @@ func (l *List[T]) RemoveAll() {
 	l.head = nil
 	l.tail = nil
 	l.length = 0
+}
+
+// ToSlice retrieves List as a Go slice.
+func (l *List[T]) ToSlice() []T {
+	if l.length == 0 {
+		return nil
+	}
+
+	current := l.head
+	buf := make([]T, 0, l.length)
+	for current != nil {
+		buf = append(buf, current.Value)
+		current = current.Next
+	}
+	return buf
 }
