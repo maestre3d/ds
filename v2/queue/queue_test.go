@@ -5,7 +5,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/maestre3d/ds/v2/linkedlist"
 	"github.com/maestre3d/ds/v2/queue"
+	"github.com/maestre3d/ds/v2/slice"
 )
 
 func TestNewSliceQueue(t *testing.T) {
@@ -33,6 +35,48 @@ func TestNewSliceQueue(t *testing.T) {
 		{
 			name:      "lifo slice",
 			q:         queue.NewSliceQueue[string](queue.LIFO, 0),
+			queueType: queue.LIFO,
+			in:        []string{"0", "1", "2", "3"},
+			exp:       []string{"3", "2", "1", "0"},
+		},
+		{
+			name:      "unknown list",
+			q:         queue.NewListQueue[string](queue.FIFO, slice.NewList[string](0)),
+			queueType: 0,
+			in:        []string{"0", "1", "2", "3"},
+			exp:       []string{"0", "1", "2", "3"},
+		},
+		{
+			name:      "fifo list",
+			q:         queue.NewListQueue[string](queue.FIFO, slice.NewList[string](0)),
+			queueType: queue.FIFO,
+			in:        []string{"0", "1", "2", "3"},
+			exp:       []string{"0", "1", "2", "3"},
+		},
+		{
+			name:      "lifo list",
+			q:         queue.NewListQueue[string](queue.LIFO, slice.NewList[string](0)),
+			queueType: queue.LIFO,
+			in:        []string{"0", "1", "2", "3"},
+			exp:       []string{"3", "2", "1", "0"},
+		},
+		{
+			name:      "unknown list linked list",
+			q:         queue.NewListQueue[string](queue.FIFO, linkedlist.NewList[string]()),
+			queueType: 0,
+			in:        []string{"0", "1", "2", "3"},
+			exp:       []string{"0", "1", "2", "3"},
+		},
+		{
+			name:      "fifo list linked list",
+			q:         queue.NewListQueue[string](queue.FIFO, linkedlist.NewList[string]()),
+			queueType: queue.FIFO,
+			in:        []string{"0", "1", "2", "3"},
+			exp:       []string{"0", "1", "2", "3"},
+		},
+		{
+			name:      "lifo list linked list",
+			q:         queue.NewListQueue[string](queue.LIFO, linkedlist.NewList[string]()),
 			queueType: queue.LIFO,
 			in:        []string{"0", "1", "2", "3"},
 			exp:       []string{"3", "2", "1", "0"},
@@ -108,6 +152,36 @@ func TestSliceQueue_Clear(t *testing.T) {
 		{
 			name: "populated slice",
 			q:    queue.NewSliceQueue[int](queue.FIFO, 0),
+			in:   []int{0, 1, 2},
+		},
+		{
+			name: "nil list",
+			q:    queue.NewListQueue[int](queue.FIFO, slice.NewList[int](0)),
+			in:   nil,
+		},
+		{
+			name: "empty list",
+			q:    queue.NewListQueue[int](queue.FIFO, slice.NewList[int](0)),
+			in:   []int{},
+		},
+		{
+			name: "populated list",
+			q:    queue.NewListQueue[int](queue.FIFO, slice.NewList[int](0)),
+			in:   []int{0, 1, 2},
+		},
+		{
+			name: "nil list linked list",
+			q:    queue.NewListQueue[int](queue.FIFO, linkedlist.NewList[int]()),
+			in:   nil,
+		},
+		{
+			name: "empty list linked list",
+			q:    queue.NewListQueue[int](queue.FIFO, linkedlist.NewList[int]()),
+			in:   []int{},
+		},
+		{
+			name: "populated list linked list",
+			q:    queue.NewListQueue[int](queue.FIFO, linkedlist.NewList[int]()),
 			in:   []int{0, 1, 2},
 		},
 		{
