@@ -13,7 +13,9 @@ type SliceQueue[T any] struct {
 var _ Queue[string] = &SliceQueue[string]{}
 
 // NewSliceQueue allocates a new SliceQueue Queue instance. Accepts an initial capacity for the underlying slice.
-// If capacity is < 0, capacity will fallback to 0. Default Type is FIFO.
+// If capacity is < 0, capacity will fallback to 0.
+//
+// Default Type is FIFO.
 func NewSliceQueue[T any](t Type, initCap int) *SliceQueue[T] {
 	if initCap < 0 {
 		initCap = 0
@@ -29,6 +31,7 @@ func NewSliceQueue[T any](t Type, initCap int) *SliceQueue[T] {
 	}
 }
 
+// NewIterator allocates a new Iterator instance.
 func (s *SliceQueue[T]) NewIterator(_ ds.IterationType) ds.Iterator[T] {
 	return newIterator[T](s)
 }

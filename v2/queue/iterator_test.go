@@ -10,30 +10,41 @@ import (
 
 func TestIterator(t *testing.T) {
 	tests := []struct {
-		name   string
-		in     []string
-		inType queue.Type
-		exp    []string
+		name string
+		q    queue.Queue[string]
+		in   []string
+		exp  []string
 	}{
 		{
-			name:   "fifo",
-			in:     []string{"0", "1", "2"},
-			inType: queue.FIFO,
-			exp:    []string{"0", "1", "2"},
+			name: "fifo slice",
+			q:    queue.NewSliceQueue[string](queue.FIFO, 0),
+			in:   []string{"0", "1", "2"},
+			exp:  []string{"0", "1", "2"},
 		},
 		{
-			name:   "lifo",
-			in:     []string{"0", "1", "2"},
-			inType: queue.LIFO,
-			exp:    []string{"2", "1", "0"},
+			name: "lifo slice",
+			q:    queue.NewSliceQueue[string](queue.LIFO, 0),
+			in:   []string{"0", "1", "2"},
+			exp:  []string{"2", "1", "0"},
+		},
+		{
+			name: "fifo linked list",
+			q:    queue.NewLinkedListQueue[string](queue.FIFO),
+			in:   []string{"0", "1", "2"},
+			exp:  []string{"0", "1", "2"},
+		},
+		{
+			name: "lifo linked list",
+			q:    queue.NewLinkedListQueue[string](queue.LIFO),
+			in:   []string{"0", "1", "2"},
+			exp:  []string{"2", "1", "0"},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			q := queue.NewSliceQueue[string](tt.inType, 0)
-			q.EnqueueAll(tt.in...)
-			iter := q.NewIterator(0)
+			tt.q.EnqueueAll(tt.in...)
+			iter := tt.q.NewIterator(0)
 			i := 0
 			for iter.HasNext() {
 				assert.Equal(t, tt.exp[i], iter.Next())

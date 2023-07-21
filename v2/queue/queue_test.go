@@ -11,66 +11,78 @@ import (
 func TestNewSliceQueue(t *testing.T) {
 	tests := []struct {
 		name      string
+		q         queue.Queue[string]
 		queueType queue.Type
-		initCap   int
+		in        []string
 		exp       []string
 	}{
 		{
-			name:      "unknown",
+			name:      "unknown slice",
+			q:         queue.NewSliceQueue[string](0, 0),
 			queueType: 0,
-			initCap:   0,
+			in:        []string{"0", "1", "2", "3"},
 			exp:       []string{"0", "1", "2", "3"},
 		},
 		{
-			name:      "fifo",
+			name:      "fifo slice",
+			q:         queue.NewSliceQueue[string](queue.FIFO, 0),
 			queueType: queue.FIFO,
-			initCap:   0,
+			in:        []string{"0", "1", "2", "3"},
 			exp:       []string{"0", "1", "2", "3"},
 		},
 		{
-			name:      "lifo",
+			name:      "lifo slice",
+			q:         queue.NewSliceQueue[string](queue.LIFO, 0),
 			queueType: queue.LIFO,
-			initCap:   0,
+			in:        []string{"0", "1", "2", "3"},
+			exp:       []string{"3", "2", "1", "0"},
+		},
+		{
+			name:      "unknown linked list",
+			q:         queue.NewLinkedListQueue[string](0),
+			queueType: 0,
+			in:        []string{"0", "1", "2", "3"},
 			exp:       []string{"0", "1", "2", "3"},
+		},
+		{
+			name:      "fifo linked list",
+			q:         queue.NewLinkedListQueue[string](queue.FIFO),
+			queueType: queue.FIFO,
+			in:        []string{"0", "1", "2", "3"},
+			exp:       []string{"0", "1", "2", "3"},
+		},
+		{
+			name:      "lifo linked list",
+			q:         queue.NewLinkedListQueue[string](queue.LIFO),
+			queueType: queue.LIFO,
+			in:        []string{"0", "1", "2", "3"},
+			exp:       []string{"3", "2", "1", "0"},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var q queue.Queue[string] = queue.NewSliceQueue[string](tt.queueType, tt.initCap)
-			_, ok := q.Peek()
+			_, ok := tt.q.Peek()
 			assert.False(t, ok)
-			_, ok = q.Dequeue()
+			_, ok = tt.q.Dequeue()
 			assert.False(t, ok)
 
-			for _, item := range tt.exp {
-				q.Enqueue(item)
+			for _, item := range tt.in {
+				tt.q.Enqueue(item)
 			}
 
-			if tt.queueType == queue.FIFO || tt.queueType == 0 {
-				for _, item := range tt.exp {
-					itemQueue, okQueue := q.Peek()
-					assert.True(t, okQueue)
-					assert.Equal(t, item, itemQueue)
+			for _, item := range tt.exp {
+				itemQueue, okQueue := tt.q.Peek()
+				assert.True(t, okQueue)
+				assert.Equal(t, item, itemQueue)
 
-					itemQueue, okQueue = q.Dequeue()
-					assert.True(t, okQueue)
-					assert.Equal(t, item, itemQueue)
-				}
-			} else if tt.queueType == queue.LIFO {
-				for i := len(tt.exp) - 1; i >= 0; i-- {
-					itemQueue, okQueue := q.Peek()
-					assert.True(t, okQueue)
-					assert.Equal(t, tt.exp[i], itemQueue)
-
-					itemQueue, okQueue = q.Dequeue()
-					assert.True(t, okQueue)
-					assert.Equal(t, tt.exp[i], itemQueue)
-				}
+				itemQueue, okQueue = tt.q.Dequeue()
+				assert.True(t, okQueue)
+				assert.Equal(t, item, itemQueue)
 			}
 
 			// validate buffer out-of-bounds error
-			item, ok := q.Dequeue()
+			item, ok := tt.q.Dequeue()
 			assert.False(t, ok)
 			assert.Zero(t, item)
 		})
@@ -78,14 +90,52 @@ func TestNewSliceQueue(t *testing.T) {
 }
 
 func TestSliceQueue_Clear(t *testing.T) {
-	q := queue.NewSliceQueue[string](queue.FIFO, 10)
-	q.EnqueueAll("0", "1", "2")
-	assert.Equal(t, 3, q.Len())
-	assert.Equal(t, 10, q.Cap())
+	tests := []struct {
+		name string
+		q    queue.Queue[int]
+		in   []int
+	}{
+		{
+			name: "nil slice",
+			q:    queue.NewSliceQueue[int](queue.FIFO, 0),
+			in:   nil,
+		},
+		{
+			name: "empty slice",
+			q:    queue.NewSliceQueue[int](queue.FIFO, 0),
+			in:   []int{},
+		},
+		{
+			name: "populated slice",
+			q:    queue.NewSliceQueue[int](queue.FIFO, 0),
+			in:   []int{0, 1, 2},
+		},
+		{
+			name: "nil linked list",
+			q:    queue.NewLinkedListQueue[int](queue.FIFO),
+			in:   nil,
+		},
+		{
+			name: "empty linked list",
+			q:    queue.NewLinkedListQueue[int](queue.FIFO),
+			in:   []int{},
+		},
+		{
+			name: "populated linked list",
+			q:    queue.NewLinkedListQueue[int](queue.FIFO),
+			in:   []int{0, 1, 2},
+		},
+	}
 
-	q.Clear()
-	assert.Equal(t, 0, q.Len())
-	assert.Equal(t, 10, q.Cap())
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.q.EnqueueAll(tt.in...)
+			assert.Equal(t, len(tt.in), tt.q.Len())
+
+			tt.q.Clear()
+			assert.Equal(t, 0, tt.q.Len())
+		})
+	}
 }
 
 func BenchmarkNewSliceQueue(b *testing.B) {

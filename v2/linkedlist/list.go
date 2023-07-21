@@ -176,9 +176,24 @@ func (l *List[T]) RemoveAt(pos int) {
 			l.length--
 		}
 	}()
-	if pos == 0 {
+
+	if pos == 0 && pos == l.length-1 {
+		l.head = nil
+		l.tail = nil
+		wasShift = true
+		return
+	} else if pos == 0 {
 		l.head = nextNode
-		nextNode.Previous = nil
+		if nextNode != nil {
+			nextNode.Previous = nil
+		}
+		wasShift = true
+		return
+	} else if pos == l.length-1 {
+		l.tail = prevNode
+		if prevNode != nil {
+			prevNode.Next = nil
+		}
 		wasShift = true
 		return
 	}
