@@ -6,7 +6,7 @@ type HashMap[K comparable, V any] map[K]V
 
 var _ Map[int, any] = HashMap[int, any]{}
 
-func (h HashMap[K, V]) NewIterator(_ ds.IterationType) ds.Iterator[V] {
+func (h HashMap[K, V]) NewIterator(_ ds.IterationType) ds.Iterator[KeyValueItem[K, V]] {
 	cpMap := make(map[K]V)
 	for k, v := range h {
 		cpMap[k] = v
@@ -87,4 +87,8 @@ func (h HashMap[K, V]) ToSliceValues() []V {
 		buf = append(buf, v)
 	}
 	return buf
+}
+
+func (h HashMap[K, V]) Len() int {
+	return len(h)
 }

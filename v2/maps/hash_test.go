@@ -32,7 +32,7 @@ func TestHashMap_NewIterator(t *testing.T) {
 	expSet := set.HashSet[string]{}
 	iter := s.NewIterator(0)
 	for iter.HasNext() {
-		expSet.Add(iter.Next())
+		expSet.Add(iter.Next().Value)
 	}
 
 	for _, v := range s {

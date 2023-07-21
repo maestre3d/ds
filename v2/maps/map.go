@@ -7,8 +7,13 @@ type KeyValueItem[K comparable, V any] struct {
 	Value V
 }
 
+func (v KeyValueItem[K, V]) IsEmpty() bool {
+	var keyZeroVal K
+	return v.Key == keyZeroVal
+}
+
 type Map[K comparable, V any] interface {
-	ds.Iterable[V]
+	ds.Iterable[KeyValueItem[K, V]]
 	ds.Slicer[KeyValueItem[K, V]]
 	Put(key K, val V)
 	PutAll(keys []K, values []V)
@@ -18,4 +23,5 @@ type Map[K comparable, V any] interface {
 	Contains(key K) bool
 	ToSliceKeys() []K
 	ToSliceValues() []V
+	Len() int
 }
